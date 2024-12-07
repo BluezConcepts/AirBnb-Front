@@ -8,9 +8,15 @@ import router from "./router";
 
 import PrimeVue from "primevue/config";
 
-const app = createApp(App);
-app.use(PrimeVue);
+import Aura from "@primevue/themes/aura";
 
+const app = createApp(App);
+
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+  },
+});
 app.use(createPinia());
 app.use(router);
 

@@ -3,7 +3,9 @@ import CampingSpotsFilter from "../components/CampingSpotsFilter.vue";
 </script>
 
 <template>
-  <main>
-    <h1>test</h1>
-  </main>
+  <div>
+    <!-- spots filter -->
+    <CampingSpotsFilter></CampingSpotsFilter>
+    <!-- catalogus? -> camping spots -->
+  </div>
 </template>

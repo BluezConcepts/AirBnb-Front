@@ -52,73 +52,95 @@ const campingAmenities = ref([
   { id: "pet_friendly", name: "Pet-friendly" },
 ]);
 </script>
+
+<!-- container that contains->  Datum / Locatie? / Capacity hoeveelheid mensen / filteren op tag. -->
 <template>
-  <!-- container that contains->  Datum / Locatie? / Capacity hoeveelheid mensen / filteren op tag. -->
+  <div
+    class="flex flex-col space-y-4 md:space-y-0 md:space-x-4 md:grid md:grid-cols-2 lg:grid-cols-3"
+  >
+    <!-- Start Date -->
+    <div class="flex flex-col w-full">
+      <FloatLabel>
+        <DatePicker
+          v-model="selectedStartDateFilter"
+          inputId="start_date"
+          showIcon
+          iconDisplay="input"
+          class="w-full"
+        />
+        <label for="start_date">Start Date</label>
+      </FloatLabel>
+    </div>
 
-  <div>
-    <!-- start date -->
-    <FloatLabel variant="on">
-      <DatePicker
-        v-model="selectedStartDateFilter"
-        inputId="on_label"
-        showIcon
-        iconDisplay="input"
+    <!-- End Date -->
+    <div class="flex flex-col w-full">
+      <FloatLabel>
+        <DatePicker
+          v-model="selectedEndDateFilter"
+          inputId="end_date"
+          showIcon
+          iconDisplay="input"
+          class="w-full"
+        />
+        <label for="end_date">End Date</label>
+      </FloatLabel>
+    </div>
+
+    <!-- Cities Dropdown -->
+    <div class="flex flex-col">
+      <MultiSelect
+        v-model="selectedCities"
+        :options="cities"
+        optionLabel="name"
+        optionValue="id"
+        filter
+        placeholder="Select Cities"
+        :maxSelectedLabels="3"
+        class="w-full"
       />
-      <label for="on_label">Start Date</label>
-    </FloatLabel>
+    </div>
 
-    <!-- end date -->
-    <FloatLabel variant="on">
-      <DatePicker
-        v-model="selectedEndDateFilter"
-        inputId="on_label"
-        showIcon
-        iconDisplay="input"
+    <!-- People Capacity -->
+    <div class="flex flex-col">
+      <FloatLabel>
+        <InputNumber
+          v-model="selectedPeopleCapacity"
+          inputId="minmax-buttons"
+          mode="decimal"
+          showButtons
+          :min="1"
+          :max="100"
+          fluid
+        />
+      </FloatLabel>
+    </div>
+
+    <!-- Tags Filter -->
+    <div class="flex flex-col">
+      <MultiSelect
+        v-model="selectedTags"
+        :options="campingTags"
+        optionLabel="name"
+        optionValue="id"
+        filter
+        placeholder="Select Tags"
+        :maxSelectedLabels="3"
+        class="w-full"
       />
-      <label for="on_label">End Date</label>
-    </FloatLabel>
+    </div>
 
-    <!-- locatie dropdown -->
-    <MultiSelect
-      v-model="selectedCities"
-      :options="cities"
-      optionLabel="name"
-      filter
-      placeholder="Select Cities"
-      :maxSelectedLabels="3"
-      class="w-full md:w-80"
-    />
-
-    <!-- aantal mensen -->
-    <InputNumber
-      v-model="selectedPeopleCapacity"
-      inputId="minmax-buttons"
-      mode="decimal"
-      showButtons
-      :min="1"
-      :max="100"
-      fluid
-    />
-
-    <!-- filter op tags -->
-    <MultiSelect
-      v-model="selectedCampingTags"
-      :options="campingTags"
-      optionLabel="name"
-      filter
-      placeholder="Tags"
-      :maxSelectedLabels="3"
-      class="w-full md:w-80"
-    />
-    <!-- filter op ammeneties -->
-    <MultiSelect
-      v-model="selectedCampingAmenities"
-      :options="campingAmenities"
-      optionLabel="name"
-      filter
-      placeholder="Ameneties"
-      :maxSelectedLabels="3"
-      class="w-full md:w-80"
-    />
+    <!-- Amenities Filter -->
+    <div class="flex flex-col">
+      <MultiSelect
+        v-model="selectedAmeneties"
+        :options="campingAmenities"
+        optionLabel="name"
+        optionValue="id"
+        filter
+        placeholder="Select Amenities"
+        :maxSelectedLabels="3"
+        class="w-full"
+      />
+    </div>
   </div>
 </template>

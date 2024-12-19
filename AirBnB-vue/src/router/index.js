@@ -25,6 +25,7 @@ import LoginView from "../views/LoginView.vue";
 import HomeView from "../views/HomeView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import CampingCatalogusView from "../views/CampingCatalogusView.vue";
+import CampingSpotDetailView from "../views/CampingSpotDetailView.vue";
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -35,6 +36,7 @@ const routes = [
     name: "campingspots",
     component: CampingCatalogusView,
   },
+  { path: "/spot/:id", name: "spotDetail", component: CampingSpotDetailView },
 ];
 
 const router = createRouter({

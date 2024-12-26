@@ -2,19 +2,42 @@
 import Button from "primevue/button";
 import { useRouter } from "vue-router";
 import { ref, onBeforeMount } from "vue";
+import { watch, defineProps } from "vue";
 
 const router = useRouter();
 //Define props to accept data
 const spots = ref([]);
+var uneditedSpots = {};
 function fetchCampingSpots() {
   fetch("http://localhost:3000/campingspots").then(async (res) => {
     // console.log(res.json());
-    spots.value = await res.json();
+    const response = await res.json();
+    spots.value = response;
+    uneditedSpots = response;
   });
 }
 onBeforeMount(() => {
   fetchCampingSpots();
 });
+
+const filteredSpots = ref(undefined);
+
+const props = defineProps({
+  capacity: Number,
+});
+
+console.log(props.capacity);
+
+watch(
+  () => props.capacity,
+  () => {
+    spots.value = uneditedSpots.filter((spot) => {
+      return spot.capacity >= props.capacity;
+    });
+
+    console.log("received capacity change in sibling!");
+  }
+);
 </script>
 
 <template>
@@ -45,6 +68,10 @@ onBeforeMount(() => {
           <div class="flex items-center">
             <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
             <span class="ml-2 text-gray-500">{{ spot.average_rating }}</span>
+          </div>
+
+          <div>
+            {{ spot.capacity }}
           </div>
 
           <!-- Placeholder for Price -->

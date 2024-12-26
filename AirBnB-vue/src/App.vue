@@ -1,6 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import Button from "primevue/button";
+import { ref } from "vue";
+const userData = ref(sessionStorage.getItem("userObject"));
+function logout() {
+  sessionStorage.removeItem("userObject");
+  userData.value = null;
+}
 </script>
 
 <template>
@@ -19,8 +25,29 @@ import Button from "primevue/button";
         </div>
         <!-- Login dingen -->
         <div class="flex gap-4">
-          <RouterLink to="/login"> <span>Login</span> </RouterLink>
-          <RouterLink to="/register"> <span>Register</span> </RouterLink>
+          <RouterLink v-if="!userData" to="/login">
+            <span>Login</span>
+          </RouterLink>
+          <RouterLink v-if="!userData" to="/register">
+            <span>Register</span>
+          </RouterLink>
+
+          <!-- Show My Bookings for normal users -->
+          <RouterLink v-if="userData && !userData.isOwner" to="/my-bookings">
+            <span>My Bookings</span>
+          </RouterLink>
+
+          <!-- Show Manage Spots for owners -->
+          <RouterLink v-if="userData && userData.isOwner" to="/manage-spots">
+            <span>Manage Spots</span>
+          </RouterLink>
+
+          <RouterLink v-if="userData" to="/account-profile">
+            <span>My Account</span>
+          </RouterLink>
+          <RouterLink v-if="userData" @click="logout" to="/">
+            <span>Log-Out</span>
+          </RouterLink>
         </div>
       </nav>
     </div>

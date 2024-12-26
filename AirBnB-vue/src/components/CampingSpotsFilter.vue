@@ -4,6 +4,7 @@ import FloatLabel from "primevue/floatlabel";
 import DatePicker from "primevue/datepicker";
 import InputNumber from "primevue/inputnumber";
 import MultiSelect from "primevue/multiselect";
+import { onMounted } from "vue";
 const selectedPeopleCapacity = ref(1);
 const selectedCities = ref([]);
 const selectedStartDateFilter = ref();
@@ -51,6 +52,12 @@ const campingAmenities = ref([
   { id: "wheelchair_accessible", name: "Wheelchair accessible" },
   { id: "pet_friendly", name: "Pet-friendly" },
 ]);
+const emit = defineEmits(["updateCapacity"]);
+
+const sendCapacityEmit = (capacity) => {
+  console.log(capacity);
+  emit("updateCapacity", capacity);
+};
 </script>
 
 <!-- container that contains->  Datum / Locatie? / Capacity hoeveelheid mensen / filteren op tag. -->
@@ -104,7 +111,7 @@ const campingAmenities = ref([
     <div class="flex flex-col">
       <FloatLabel>
         <InputNumber
-          v-model="selectedPeopleCapacity"
+          @input="(emittedData) => sendCapacityEmit(emittedData.value)"
           inputId="minmax-buttons"
           mode="decimal"
           showButtons

@@ -6,8 +6,46 @@ import Button from "primevue/button";
 import { useRouter } from "vue-router";
 
 const email = ref("");
-const router = useRouter();
 const password = ref("");
+const router = useRouter();
+
+async function handleLogin() {
+  try {
+    const response = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.value, password: password.value }),
+    });
+
+    if (response.status === 404) {
+      alert("Invalid credentials. Please check your email and password.");
+      return;
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(errorData.message || "Login failed.");
+      return;
+    }
+
+    const data = await response.json();
+    alert("Login successful!");
+    window.location.replace("/");
+    // Save user data locally (e.g., sessionStorage, Vuex, etc.)
+    console.log("User data:", data);
+    sessionStorage.setItem("userObject", JSON.stringify(data.user));
+
+    // Redirect based on role
+    if (data.user.isOwner) {
+      router.push({ path: "/owner-dashboard" }); // Owners' specific dashboard
+    } else {
+      router.push({ path: "/camper-dashboard" }); // Campers' specific dashboard
+    }
+  } catch (err) {
+    console.error("Error during login:", err);
+    alert("An error occurred. Please try again later.");
+  }
+}
 </script>
 
 <template>
@@ -37,7 +75,7 @@ const password = ref("");
         id="password"
         v-model="password"
         placeholder="Enter your password"
-        :feedback="true"
+        :feedback="false"
         toggleMask
         class="w-full"
       />
@@ -48,12 +86,15 @@ const password = ref("");
       label="Login"
       icon="pi pi-sign-in"
       class="w-full p-button-primary"
+      @click="handleLogin"
     />
+
+    <!-- Register Button -->
     <Button
       v-on:click="router.push({ path: '/register' })"
       label="Sign up"
-      icon="pi pi-sign-in"
-      class="w-full p-button-primary"
+      icon="pi pi-user-plus"
+      class="w-full p-button-secondary mt-2"
     />
   </div>
 </template>

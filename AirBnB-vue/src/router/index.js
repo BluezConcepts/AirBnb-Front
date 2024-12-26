@@ -26,17 +26,26 @@ import HomeView from "../views/HomeView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import CampingCatalogusView from "../views/CampingCatalogusView.vue";
 import CampingSpotDetailView from "../views/CampingSpotDetailView.vue";
+import CamperDashBoardView from "../views/CamperDashBoardView.vue";
+import ProfilePageView from "../views/ProfilePageView.vue";
+import BookingsSectionView from "../views/BookingsSectionView.vue";
 
 const routes = [
-  { path: "/", name: "home", component: HomeView },
+  { path: "/", name: "home", component: CamperDashBoardView },
   { path: "/login", name: "login", component: LoginView },
   { path: "/register", name: "register", component: RegisterView },
+  {
+    path: "/account-profile",
+    name: "accountprofile",
+    component: ProfilePageView,
+  },
   {
     path: "/campingspots",
     name: "campingspots",
     component: CampingCatalogusView,
   },
   { path: "/spot/:id", name: "spotDetail", component: CampingSpotDetailView },
+  { path: "/my-bookings", name: "myBookings", component: BookingsSectionView },
 ];
 
 const router = createRouter({

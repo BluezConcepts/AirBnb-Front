@@ -7,10 +7,11 @@ import { watch, defineProps } from "vue";
 const router = useRouter();
 //Define props to accept data
 const spots = ref([]);
-var uneditedSpots = {};
+let uneditedSpots = [];
 function fetchCampingSpots() {
   fetch("http://localhost:3000/campingspots").then(async (res) => {
-    // console.log(res.json());
+    // const text = await res.text();
+    // console.log("Response Text:", text);
     const response = await res.json();
     spots.value = response;
     uneditedSpots = response;
@@ -20,23 +21,35 @@ onBeforeMount(() => {
   fetchCampingSpots();
 });
 
-const filteredSpots = ref(undefined);
-
 const props = defineProps({
-  capacity: Number,
+  filter: Object, // Accept the entire filter object
 });
 
-console.log(props.capacity);
+console.log(props.filter);
 
 watch(
-  () => props.capacity,
-  () => {
+  () => props.filter, // Watch the entire filter object
+  (newFilter) => {
     spots.value = uneditedSpots.filter((spot) => {
-      return spot.capacity >= props.capacity;
+      return (
+        (!newFilter.capacity || spot.capacity >= newFilter.capacity) &&
+        (!newFilter.tags.length ||
+          newFilter.tags.every((tag) => spot.tags.includes(tag))) &&
+        (!newFilter.amenities.length ||
+          newFilter.amenities.every((amenity) =>
+            spot.amenities.includes(amenity)
+          )) &&
+        (!newFilter.cities.length || newFilter.cities.includes(spot.city)) &&
+        (!newFilter.startDate ||
+          new Date(spot.availableFrom) >= new Date(newFilter.startDate)) &&
+        (!newFilter.endDate ||
+          new Date(spot.availableUntil) <= new Date(newFilter.endDate))
+      );
     });
 
-    console.log("received capacity change in sibling!");
-  }
+    console.log("Filter applied:", newFilter);
+  },
+  { deep: true } // Deep watch to detect changes in nested properties
 );
 </script>
 
@@ -82,13 +95,26 @@ watch(
           <!-- Placeholder for Tags -->
           <div class="flex flex-wrap gap-2">
             <span
+              v-for="tag in spot.tags.split(', ')"
+              :key="tag"
               class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
             >
-              {{ spot.tags }}
+              {{ tag }}
             </span>
           </div>
 
-          <div className="text-white" v-if="spots.length === 0">loading...</div>
+          <!-- Placeholder for Amenities -->
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="amenity in spot.amenities.split(', ')"
+              :key="amenity"
+              class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full"
+            >
+              {{ amenity }}
+            </span>
+          </div>
+
+          <div class="text-white" v-if="spots.length === 0">loading...</div>
 
           <!-- Placeholder for Button -->
           <Button

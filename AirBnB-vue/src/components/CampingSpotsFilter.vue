@@ -4,25 +4,23 @@ import FloatLabel from "primevue/floatlabel";
 import DatePicker from "primevue/datepicker";
 import InputNumber from "primevue/inputnumber";
 import MultiSelect from "primevue/multiselect";
-import { onMounted } from "vue";
-const selectedPeopleCapacity = ref(1);
-const selectedCities = ref([]);
-const selectedStartDateFilter = ref();
-const selectedEndDateFilter = ref();
-const selectedTags = ref([]);
-const selectedAmeneties = ref([]);
 
-const cities = ref([
-  { name: "Durbuy" },
-  { name: "Ostend" },
-  { name: "Ghent" },
-  { name: "Antwerp" },
-  { name: "Lier" },
-  { name: "Mechelen" },
-  { name: "Kortrijk" },
-]);
+const props = defineProps({
+  filter: Object,
+});
 
-const campingTags = ref([
+//  constants for cities, tags, and amenities
+const cities = [
+  { id: "durbuy", name: "Durbuy" },
+  { id: "ostend", name: "Ostend" },
+  { id: "ghent", name: "Ghent" },
+  { id: "antwerp", name: "Antwerp" },
+  { id: "lier", name: "Lier" },
+  { id: "mechelen", name: "Mechelen" },
+  { id: "kortrijk", name: "Kortrijk" },
+];
+
+const campingTags = [
   { id: "near_city", name: "Near a city" },
   { id: "near_forest", name: "Near a forest" },
   { id: "near_lake", name: "Near a lake" },
@@ -33,9 +31,9 @@ const campingTags = ref([
   { id: "family_friendly", name: "Family-friendly" },
   { id: "pet_friendly", name: "Pet-friendly" },
   { id: "hiking_trails", name: "Close to hiking trails" },
-]);
+];
 
-const campingAmenities = ref([
+const campingAmenities = [
   { id: "wifi", name: "WiFi" },
   { id: "sauna", name: "Sauna" },
   { id: "air_conditioning", name: "Air conditioning" },
@@ -51,16 +49,9 @@ const campingAmenities = ref([
   { id: "parking", name: "Parking" },
   { id: "wheelchair_accessible", name: "Wheelchair accessible" },
   { id: "pet_friendly", name: "Pet-friendly" },
-]);
-const emit = defineEmits(["updateCapacity"]);
-
-const sendCapacityEmit = (capacity) => {
-  console.log(capacity);
-  emit("updateCapacity", capacity);
-};
+];
 </script>
 
-<!-- container that contains->  Datum / Locatie? / Capacity hoeveelheid mensen / filteren op tag. -->
 <template>
   <div
     class="flex flex-col space-y-4 md:space-y-0 md:space-x-4 md:grid md:grid-cols-2 lg:grid-cols-3"
@@ -69,7 +60,7 @@ const sendCapacityEmit = (capacity) => {
     <div class="flex flex-col w-full">
       <FloatLabel>
         <DatePicker
-          v-model="selectedStartDateFilter"
+          v-model="filter.startDate"
           inputId="start_date"
           showIcon
           iconDisplay="input"
@@ -83,7 +74,7 @@ const sendCapacityEmit = (capacity) => {
     <div class="flex flex-col w-full">
       <FloatLabel>
         <DatePicker
-          v-model="selectedEndDateFilter"
+          v-model="filter.endDate"
           inputId="end_date"
           showIcon
           iconDisplay="input"
@@ -96,7 +87,7 @@ const sendCapacityEmit = (capacity) => {
     <!-- Cities Dropdown -->
     <div class="flex flex-col">
       <MultiSelect
-        v-model="selectedCities"
+        v-model="filter.cities"
         :options="cities"
         optionLabel="name"
         optionValue="id"
@@ -111,21 +102,22 @@ const sendCapacityEmit = (capacity) => {
     <div class="flex flex-col">
       <FloatLabel>
         <InputNumber
-          @input="(emittedData) => sendCapacityEmit(emittedData.value)"
-          inputId="minmax-buttons"
+          v-model="filter.capacity"
+          inputId="capacity"
           mode="decimal"
           showButtons
           :min="1"
           :max="100"
           fluid
         />
+        <label for="capacity">Capacity</label>
       </FloatLabel>
     </div>
 
-    <!-- Tags Filter -->
+    <!-- Tags -->
     <div class="flex flex-col">
       <MultiSelect
-        v-model="selectedTags"
+        v-model="filter.tags"
         :options="campingTags"
         optionLabel="name"
         optionValue="id"
@@ -136,10 +128,10 @@ const sendCapacityEmit = (capacity) => {
       />
     </div>
 
-    <!-- Amenities Filter -->
+    <!-- Amenities -->
     <div class="flex flex-col">
       <MultiSelect
-        v-model="selectedAmeneties"
+        v-model="filter.amenities"
         :options="campingAmenities"
         optionLabel="name"
         optionValue="id"

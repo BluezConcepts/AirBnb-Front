@@ -57,12 +57,7 @@ function goToBookingSpot() {
 
       <!-- Rating -->
       <div class="flex items-center mt-4">
-        <Rating
-          :value="spot.average_rating"
-          readonly
-          stars="5"
-          cancel="false"
-        />
+        <Rating v-model="spot.average_rating" readonly />
         <span class="ml-2 text-gray-500 text-sm"
           >({{ spot.average_rating }})</span
         >

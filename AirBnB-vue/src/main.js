@@ -10,6 +10,13 @@ import PrimeVue from "primevue/config";
 
 import Aura from "@primevue/themes/aura";
 
+import Rating from "primevue/rating";
+
+// Import PrimeVue CSS and PrimeIcons
+import "primevue/resources/themes/saga-blue/theme.css"; // Choose your theme
+import "primevue/resources/primevue.min.css";
+import "primeicons/primeicons.css";
+
 const app = createApp(App);
 
 app.use(PrimeVue, {

@@ -4,6 +4,8 @@ import { useRouter } from "vue-router";
 import { ref, onBeforeMount } from "vue";
 import { watch, defineProps } from "vue";
 
+import Rating from "primevue/rating";
+
 const router = useRouter();
 //Define props to accept data
 const spots = ref([]);
@@ -79,19 +81,24 @@ watch(
           <!-- Placeholder for Spot Location -->
           <p class="text-gray-600">{{ spot.location }}</p>
 
-          <!-- Placeholder for Rating -->
-          <div class="flex items-center">
-            <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
-            <span class="ml-2 text-gray-500">{{ spot.average_rating }}</span>
+          <!-- Rating -->
+          <div class="flex items-center mt-4">
+            <Rating v-model="spot.average_rating" readonly />
+            <span class="ml-2 text-gray-500 text-sm"
+              >({{ spot.average_rating }})</span
+            >
           </div>
 
-          <div>
-            {{ spot.capacity }}
+          <!-- Capacity -->
+          <div class="flex items-center mt-4">
+            <span class="text-gray-600 font-small text-sm">
+              Capacity: {{ spot.capacity }} people
+            </span>
           </div>
 
           <!-- Placeholder for Price -->
           <p class="text-lg font-bold text-blue-600">
-            {{ spot.price_per_night }}
+            {{ spot.price_per_night }}/ night
           </p>
 
           <!-- Placeholder for Tags -->
@@ -116,7 +123,7 @@ watch(
             </span>
           </div>
 
-          <div class="text-white" v-if="spots.length === 0">loading...</div>
+          <!-- <div class="text-white" v-if="spots.length === 0">loading...</div> -->
 
           <!-- Placeholder for Button -->
           <Button

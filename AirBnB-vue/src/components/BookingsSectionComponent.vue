@@ -141,7 +141,7 @@ function getSeverity(status) {
                     label="View Camping Spot TEST"
                     icon="pi pi-map-marker"
                     class="p-button-primary"
-                    @click="goToCampingSpot(item.booking_id)"
+                    @click="goToCampingSpot(item.camping_spot_id)"
                   />
                 </div>
                 <div v-if="new Date() > new Date(item.end_date)">

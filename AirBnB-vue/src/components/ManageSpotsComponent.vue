@@ -40,7 +40,7 @@ async function deleteSpot(campingSpotId) {
   if (confirm("Are you sure you want to delete this camping spot?")) {
     try {
       const response = await fetch(
-        `http://localhost:3000/campingspots/${campingSpotId}`,
+        `http://localhost:3000/delete-campingspot/${campingSpotId}`,
         { method: "DELETE" }
       );
       if (response.ok) {

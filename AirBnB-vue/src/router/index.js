@@ -56,6 +56,12 @@ const routes = [
     name: "createCampingSpot",
     component: CreateCampingSpotView,
   },
+  {
+    path: "/edit-spot/:id",
+    name: "editSpot",
+    component: CreateCampingSpotView,
+    props: true,
+  },
 ];
 
 const router = createRouter({

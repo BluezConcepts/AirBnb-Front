@@ -2,7 +2,9 @@
 import { RouterLink, RouterView } from "vue-router";
 import Button from "primevue/button";
 import { ref } from "vue";
-const userData = ref(sessionStorage.getItem("userObject"));
+const userData = ref(JSON.parse(sessionStorage.getItem("userObject")));
+
+console.log(userData);
 function logout() {
   sessionStorage.removeItem("userObject");
   userData.value = null;
@@ -33,12 +35,18 @@ function logout() {
           </RouterLink>
 
           <!-- Show My Bookings for normal users -->
-          <RouterLink v-if="userData && !userData.isOwner" to="/my-bookings">
+          <RouterLink
+            v-if="userData && userData.isOwner !== 1"
+            to="/my-bookings"
+          >
             <span>My Bookings</span>
           </RouterLink>
 
           <!-- Show Manage Spots and Create Camping Spot for owners -->
-          <RouterLink v-if="userData && userData.isOwner" to="/manage-spots">
+          <RouterLink
+            v-if="userData && userData.isOwner === 1"
+            to="/manage-spots"
+          >
             <span>Manage Spots</span>
           </RouterLink>
           <RouterLink

@@ -63,10 +63,13 @@ async function createBooking() {
   console.log("elabaaaaa");
   console.log("userId", props.userId);
 
+  const formattedStartDate = startDate.value.toISOString().split("T")[0];
+  const formattedEndDate = endDate.value.toISOString().split("T")[0];
+
   const bookingData = {
     campingSpotId: spotId,
-    startDate: startDate.value,
-    endDate: endDate.value,
+    startDate: formattedStartDate,
+    endDate: formattedEndDate,
     guestCount: guestCount.value,
     userId: props.userId,
     test: "dikketest",

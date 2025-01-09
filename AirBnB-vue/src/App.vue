@@ -37,9 +37,15 @@ function logout() {
             <span>My Bookings</span>
           </RouterLink>
 
-          <!-- Show Manage Spots for owners -->
+          <!-- Show Manage Spots and Create Camping Spot for owners -->
           <RouterLink v-if="userData && userData.isOwner" to="/manage-spots">
             <span>Manage Spots</span>
+          </RouterLink>
+          <RouterLink
+            v-if="userData && userData.isOwner"
+            to="/create-campingspot"
+          >
+            <span>Create Camping Spot</span>
           </RouterLink>
 
           <RouterLink v-if="userData" to="/account-profile">

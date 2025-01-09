@@ -30,6 +30,8 @@ import CamperDashBoardView from "../views/CamperDashBoardView.vue";
 import ProfilePageView from "../views/ProfilePageView.vue";
 import BookingsSectionView from "../views/BookingsSectionView.vue";
 import CreateBookingView from "../views/CreateBookingView.vue";
+import ManageSpotsView from "../views/ManageSpotsView.vue";
+import CreateCampingSpotView from "../views/CreateCampingSpotView.vue";
 
 const routes = [
   { path: "/", name: "home", component: CamperDashBoardView },
@@ -48,6 +50,12 @@ const routes = [
   { path: "/spot/:id", name: "spotDetail", component: CampingSpotDetailView },
   { path: "/my-bookings", name: "myBookings", component: BookingsSectionView },
   { path: "/booking/:id", name: "createBooking", component: CreateBookingView },
+  { path: "/manage-spots", name: "manageSpots", component: ManageSpotsView },
+  {
+    path: "/create-campingspot",
+    name: "createCampingSpot",
+    component: CreateCampingSpotView,
+  },
 ];
 
 const router = createRouter({

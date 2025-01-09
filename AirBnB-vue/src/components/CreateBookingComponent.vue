@@ -132,16 +132,18 @@ async function createBooking() {
     </div>
 
     <!-- Guest Count -->
-    <div class="mb-4">
-      <label for="guestCount" class="block text-gray-700 font-medium mb-2"
-        >Guest Count</label
-      >
-      <InputNumber
-        id="guestCount"
-        v-model="guestCount"
-        :min="1"
-        class="w-full"
-      />
+    <div class="flex flex-col">
+      <FloatLabel>
+        <InputNumber
+          v-model="guestCount"
+          inputId="guest_count"
+          mode="decimal"
+          showButtons
+          :min="1"
+          class="w-full"
+        />
+        <label for="guest_count">Guest Count</label>
+      </FloatLabel>
     </div>
 
     <!-- Total Price -->

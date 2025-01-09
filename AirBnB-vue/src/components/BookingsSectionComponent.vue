@@ -5,6 +5,10 @@ import Button from "primevue/button";
 import Badge from "primevue/badge";
 import router from "@/router";
 import { useRouter } from "vue-router";
+import Rating from "primevue/rating";
+
+const showReviewDialog = ref(false);
+const currentBooking = ref;
 
 // Props for userId
 const props = defineProps({
@@ -138,6 +142,13 @@ function getSeverity(status) {
                     icon="pi pi-map-marker"
                     class="p-button-primary"
                     @click="goToCampingSpot(item.booking_id)"
+                  />
+                </div>
+                <div v-if="new Date() > new Date(item.end_date)">
+                  <Button
+                    label="Review"
+                    class="p-button-primary"
+                    @click="openReviewDialog(item)"
                   />
                 </div>
               </div>

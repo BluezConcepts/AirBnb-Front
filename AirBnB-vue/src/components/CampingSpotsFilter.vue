@@ -11,13 +11,13 @@ const props = defineProps({
 
 //  constants for cities, tags, and amenities
 const cities = [
-  { id: "durbuy", name: "Durbuy" },
-  { id: "ostend", name: "Ostend" },
-  { id: "ghent", name: "Ghent" },
-  { id: "antwerp", name: "Antwerp" },
-  { id: "lier", name: "Lier" },
-  { id: "mechelen", name: "Mechelen" },
-  { id: "kortrijk", name: "Kortrijk" },
+  { id: "durbuy", name: "Durbuy, Belgium" },
+  { id: "ostend", name: "Ostend, Belgium" },
+  { id: "ghent", name: "Ghent, Belgium" },
+  { id: "antwerp", name: "Antwerp, Belgium" },
+  { id: "lier", name: "Lier, Belgium" },
+  { id: "mechelen", name: "Mechelen, Belgium" },
+  { id: "kortrijk", name: "Kortrijk, Belgium" },
 ];
 
 const campingTags = [
@@ -90,7 +90,7 @@ const campingAmenities = [
         v-model="filter.cities"
         :options="cities"
         optionLabel="name"
-        optionValue="id"
+        optionValue="name"
         filter
         placeholder="Select Cities"
         :maxSelectedLabels="3"
@@ -120,7 +120,7 @@ const campingAmenities = [
         v-model="filter.tags"
         :options="campingTags"
         optionLabel="name"
-        optionValue="id"
+        optionValue="name"
         filter
         placeholder="Select Tags"
         :maxSelectedLabels="3"
@@ -134,7 +134,7 @@ const campingAmenities = [
         v-model="filter.amenities"
         :options="campingAmenities"
         optionLabel="name"
-        optionValue="id"
+        optionValue="name"
         filter
         placeholder="Select Amenities"
         :maxSelectedLabels="3"

@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter, useRoute } from "vue-router";
 import { ref, onBeforeMount } from "vue";
+import Button from "primevue/button";
 
 const router = useRouter();
 
@@ -19,6 +20,10 @@ function fetchCampingSpotDetail() {
 onBeforeMount(() => {
   fetchCampingSpotDetail();
 });
+
+function goToBookingSpot() {
+  router.push(`/booking/${spotId}`);
+}
 </script>
 
 <template>
@@ -56,6 +61,21 @@ onBeforeMount(() => {
             {{ spot.tags }}
           </span>
         </div>
+
+        <!-- Ameneties -->
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span
+            class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+          >
+            {{ spot.amenities }}
+          </span>
+        </div>
+        <Button
+          label="Book Your Spot"
+          icon="pi pi-book"
+          class="p-button-success"
+          @click="goToBookingSpot"
+        />
       </div>
     </div>
   </div>

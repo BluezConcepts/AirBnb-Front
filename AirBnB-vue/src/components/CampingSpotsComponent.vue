@@ -30,6 +30,7 @@ console.log(props.filter);
 watch(
   () => props.filter, // Watch the entire filter object
   (newFilter) => {
+    console.log("received filter change");
     spots.value = uneditedSpots.filter((spot) => {
       return (
         (!newFilter.capacity || spot.capacity >= newFilter.capacity) &&
@@ -39,7 +40,8 @@ watch(
           newFilter.amenities.every((amenity) =>
             spot.amenities.includes(amenity)
           )) &&
-        (!newFilter.cities.length || newFilter.cities.includes(spot.city)) &&
+        (!newFilter.cities.length ||
+          newFilter.cities.includes(spot.location)) &&
         (!newFilter.startDate ||
           new Date(spot.availableFrom) >= new Date(newFilter.startDate)) &&
         (!newFilter.endDate ||

@@ -91,6 +91,7 @@ async function updatePassword() {
         type="email"
         :placeholder="props.user.email"
         class="w-full"
+        readonly=""
       />
     </div>
 

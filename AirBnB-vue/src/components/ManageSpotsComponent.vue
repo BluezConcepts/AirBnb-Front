@@ -13,6 +13,7 @@ const props = defineProps({
 });
 
 const spots = ref([]); // Holds camping spot data
+const bookings = ref({}); // Initialize as an empty object
 
 // Fetch camping spots data
 onMounted(async () => {
@@ -55,6 +56,30 @@ async function deleteSpot(campingSpotId) {
       console.error("Error deleting camping spot:", error);
       alert("Failed to delete camping spot.");
     }
+  }
+}
+
+// Fetch bookings for a specific camping spot
+async function fetchBookings(campingSpotId) {
+  if (bookings.value[campingSpotId]) {
+    // Bookings already loaded for this spot
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/camping-spot-bookings?campingSpotId=${campingSpotId}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch bookings for this camping spot.");
+    }
+    bookings.value[campingSpotId] = await response.json();
+  } catch (error) {
+    console.error(
+      `Error fetching bookings for camping spot ${campingSpotId}:`,
+      error
+    );
+    bookings.value[campingSpotId] = []; // Ensure a fallback empty array
   }
 }
 </script>
@@ -116,6 +141,30 @@ async function deleteSpot(campingSpotId) {
                 </div>
               </div>
             </div>
+            <!-- Bookings Dropdown -->
+            <details class="mt-4" @toggle="fetchBookings(item.camping_spot_id)">
+              <summary class="cursor-pointer text-blue-500 hover:underline">
+                View Bookings
+              </summary>
+              <ul v-if="bookings[item.camping_spot_id]" class="mt-2">
+                <li
+                  v-for="(booking, index) in bookings[item.camping_spot_id]"
+                  :key="index"
+                  class="flex justify-between p-2 border-b border-gray-200"
+                >
+                  <div>
+                    <p><strong>Name:</strong> {{ booking.user_name }}</p>
+                    <p><strong>Email:</strong> {{ booking.user_email }}</p>
+                    <p><strong>Start Date:</strong> {{ booking.start_date }}</p>
+                    <p><strong>End Date:</strong> {{ booking.end_date }}</p>
+                    <p>
+                      <strong>Total Price:</strong> €{{ booking.total_price }}
+                    </p>
+                  </div>
+                </li>
+              </ul>
+              <p v-else class="text-gray-500">No bookings found.</p>
+            </details>
           </div>
         </div>
       </template>

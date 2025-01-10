@@ -58,24 +58,24 @@ async function updatePassword() {
   }
 }
 
-async function uploadProfilePicture(event) {
-  const file = event.files[0];
-  const formData = new FormData();
-  formData.append("profilePicture", file);
-  formData.append("userId", props.user.userId);
+// async function uploadProfilePicture(event) {
+//   const file = event.files[0];
+//   const formData = new FormData();
+//   formData.append("profilePicture", file);
+//   formData.append("userId", props.user.userId);
 
-  try {
-    const response = await fetch("http://localhost:3000/profile/picture", {
-      method: "POST",
-      body: formData,
-    });
-    if (!response.ok) throw new Error("Failed to upload profile picture.");
-    alert("Profile picture updated successfully!");
-  } catch (error) {
-    console.error(error);
-    alert("Failed to upload profile picture.");
-  }
-}
+//   try {
+//     const response = await fetch("http://localhost:3000/profile/picture", {
+//       method: "POST",
+//       body: formData,
+//     });
+//     if (!response.ok) throw new Error("Failed to upload profile picture.");
+//     alert("Profile picture updated successfully!");
+//   } catch (error) {
+//     console.error(error);
+//     alert("Failed to upload profile picture.");
+//   }
+// }
 </script>
 
 <template>
@@ -141,7 +141,7 @@ async function uploadProfilePicture(event) {
       />
     </div>
 
-    <!-- Profile Picture -->
+    <!-- Profile Picture
     <div class="field mb-4">
       <label class="block text-900 font-medium mb-2 text-black"
         >Profile Picture</label
@@ -154,6 +154,6 @@ async function uploadProfilePicture(event) {
         accept="image/*"
         class="w-full"
       />
-    </div>
+    </div> -->
   </div>
 </template>

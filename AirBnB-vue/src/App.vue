@@ -23,7 +23,7 @@ function logout() {
         <div class="flex gap-6">
           <RouterLink to="/"> <span>Home</span> </RouterLink>
           <RouterLink to="/campingspots"><span>Spots</span></RouterLink>
-          <RouterLink to="/contact"> <span>Contact</span> </RouterLink>
+          <!-- <RouterLink to="/contact"> <span>Contact</span> </RouterLink> -->
         </div>
         <!-- Login dingen -->
         <div class="flex gap-4">

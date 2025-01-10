@@ -1,13 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import FloatLabel from "primevue/floatlabel";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import MultiSelect from "primevue/multiselect";
 import FileUpload from "primevue/fileupload";
 import Button from "primevue/button";
-import { useRoute } from "vue-router";
+//import { useRoute } from "vue-router";
+import Calendar from "primevue/calendar";
 
 // Form state
 const name = ref("");
@@ -17,11 +18,12 @@ const location = ref("");
 const description = ref("");
 const selectedTags = ref([]);
 const selectedAmenities = ref([]);
-const uploadedImages = ref([]);
+//const uploadedImages = ref([]);
 
 const isEditing = ref(false);
 const editId = ref(0);
-
+const unavailableDates = ref([]); // Holds the selected unavailable dates
+const selectedUnavailableDates = ref([]); // Holds new dates to mark as unavailable
 const userData = ref(JSON.parse(sessionStorage.getItem("userObject")));
 
 // Function to check the URL and fetch data
@@ -41,6 +43,7 @@ onMounted(() => {
 
     // Fetch data using the ID
     fetchCampingSpotDetail(editId.value);
+    fetchUnavailableDates(editId.value);
   } else {
     console.log("URL does not match /edit-spot/{id} pattern");
   }
@@ -141,10 +144,11 @@ async function createCampingSpot() {
   formData.append("tags", realTagIds);
   formData.append("amenities", realAmenityIds);
   formData.append("owner_id", userData.value.userId);
+  //formData.append("unavailable_dates", JSON.stringify(unavailableDates.value));
 
-  for (const file of uploadedImages.value) {
-    formData.append("images", file);
-  }
+  // for (const file of uploadedImages.value) {
+  //   formData.append("images", file);
+  // }
 
   if (isEditing.value) {
     try {
@@ -184,6 +188,81 @@ async function createCampingSpot() {
       alert("An error occurred while creating the camping spot.");
     }
   }
+}
+//dates
+// Submit unavailable dates to the backend
+async function submitUnavailableDates(campingSpotId) {
+  console.log("Selected Unavailable Dates:", selectedUnavailableDates.value);
+
+  // Validate that we have both a start and end date
+  if (
+    !selectedUnavailableDates.value ||
+    selectedUnavailableDates.value.length !== 2 ||
+    !selectedUnavailableDates.value[0] ||
+    !selectedUnavailableDates.value[1]
+  ) {
+    alert("Please select a valid date range.");
+    return;
+  }
+
+  const formattedDates = [
+    {
+      start_date: selectedUnavailableDates.value[0].toISOString().split("T")[0],
+      end_date: selectedUnavailableDates.value[1].toISOString().split("T")[0],
+      reason: "Owner Unavailability",
+    },
+  ];
+
+  console.log("Formatted Dates to Submit:", formattedDates);
+  console.log("Submitting Unavailable Dates for Spot ID:", campingSpotId); // Debug log
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/update-unavailable-dates/${campingSpotId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dates: formattedDates }),
+      }
+    );
+
+    if (response.ok) {
+      alert("Unavailable dates updated successfully!");
+      fetchUnavailableDates(campingSpotId); // Refresh unavailable dates
+    } else {
+      throw new Error("Failed to update unavailable dates");
+    }
+  } catch (error) {
+    console.error("Error updating unavailable dates:", error);
+    alert("An error occurred while updating unavailable dates.");
+  }
+}
+
+// Fetch unavailable dates from the backend
+async function fetchUnavailableDates(campingSpotId) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/unavailable-dates?campingSpotId=${campingSpotId}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch unavailable dates");
+    }
+    const data = await response.json();
+    unavailableDates.value = data.map((entry) => ({
+      startDate: new Date(entry.start_date),
+      endDate: new Date(entry.end_date),
+      reason: entry.reason,
+    }));
+  } catch (error) {
+    console.error("Error fetching unavailable dates:", error);
+  }
+}
+
+// Call fetchUnavailableDates when editing
+if (isEditing.value) {
+  fetchUnavailableDates(editId.value);
 }
 </script>
 
@@ -278,7 +357,7 @@ async function createCampingSpot() {
     </div>
 
     <!-- Image Upload -->
-    <div class="flex flex-col mb-4">
+    <!-- <div class="flex flex-col mb-4">
       <FileUpload
         mode="basic"
         name="images"
@@ -288,8 +367,28 @@ async function createCampingSpot() {
         accept="image/*"
         v-model:files="uploadedImages"
       />
+    </div> -->
+    <!-- Select New Unavailable Dates -->
+    <div v-if="isEditing" class="flex flex-col mb-4">
+      <label for="new-unavailable-dates" class="font-semibold mb-2">
+        Select Unavailable Dates
+      </label>
+      <Calendar
+        v-model="selectedUnavailableDates"
+        id="new-unavailable-dates"
+        :selectionMode="'range'"
+        :inline="true"
+        placeholder="Select a date range"
+      />
     </div>
 
+    <Button
+      v-if="isEditing"
+      label="Save Unavailable Dates"
+      icon="pi pi-save"
+      class="p-button-primary w-full mb-4"
+      @click="submitUnavailableDates(editId.value)"
+    />
     <!-- Submit Button -->
     <Button
       :label="!isEditing ? 'Create Camping Spot' : 'Update Camping Spot'"

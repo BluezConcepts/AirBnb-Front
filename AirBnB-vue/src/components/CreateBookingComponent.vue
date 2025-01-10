@@ -5,6 +5,7 @@ import InputNumber from "primevue/inputnumber";
 import Calendar from "primevue/calendar";
 import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
+import DatePicker from "primevue/datepicker";
 
 const router = useRouter();
 
@@ -25,8 +26,64 @@ const startDate = ref(null);
 const endDate = ref(null);
 const guestCount = ref(1);
 const totalPrice = ref(0);
+// Selected date
+//const date = ref(null);
+const unavailableDates = ref([]);
+const disabledDates = ref([]);
 
-// // Fetch camping spots owned by the owner
+// // Fetch unavailable dates from API
+// onMounted(async () => {
+//   try {
+//     const response = await fetch(
+//       "http://localhost:3000/unavailable-dates?campingSpotId=1" // Replace with actual campingSpotId
+//     );
+//     if (!response.ok) throw new Error("Failed to fetch unavailable dates");
+//     // const data = await response.json();
+//     // console.log("Fetched unavailable dates (raw):", data);
+
+//     // // Map and convert dates
+//     // unavailableDates.value = data.map(({ start_date, end_date, reason }) => {
+//     //   const start = new Date(start_date);
+//     //   const end = new Date(end_date);
+
+//     //   console.log("Mapping dates:", { start, end, reason }); // Debug log for each mapped date
+
+//     //   return {
+//     //     start,
+//     //     end,
+//     //     reason, // Include the reason if needed
+//     //   };
+//     // });
+
+//     // console.log("Processed unavailable dates:", unavailableDates.value); // Final processed data
+//     const data = await response.json();
+//     console.log("Fetched unavailable dates (raw):", data);
+
+//     // Map and format dates to 'YYYY-MM-DD'
+//     unavailableDates.value = data.map(({ start_date, end_date, reason }) => ({
+//       start: start_date.split("T")[0], // Extract 'YYYY-MM-DD'
+//       end: end_date.split("T")[0], // Extract 'YYYY-MM-DD'
+//       reason,
+//     }));
+
+//     console.log("Processed unavailable dates:", unavailableDates.value);
+//   } catch (error) {
+//     console.error("Error fetching unavailable dates:", error);
+//   }
+// });
+
+// // Helper function to check if a date is unavailable
+// function isUnavailable(dateString) {
+//   return unavailableDates.value.some((range) => {
+//     return dateString >= range.start && dateString <= range.end;
+//   });
+// }
+// // Helper function to format date as 'YYYY-MM-DD'
+// function formatDate(date) {
+//   if (!date || !(date instanceof Date)) return null; // Validate date
+//   return date.toISOString().split("T")[0]; // Convert to 'YYYY-MM-DD'
+// }
+// // // Fetch camping spots owned by the owner
 // async function fetchOwnerCampingSpots() {
 //   try {
 //     const response = await fetch(
@@ -41,6 +98,60 @@ const totalPrice = ref(0);
 //     alert("Failed to load your camping spots.");
 //   }
 // }
+// Fetch unavailable dates and populate disabledDates array
+
+onMounted(async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/unavailable-dates?campingSpotId=1" // Replace with your campingSpotId
+    );
+    if (!response.ok) throw new Error("Failed to fetch unavailable dates");
+
+    const data = await response.json();
+    console.log("Fetched unavailable dates (raw):", data);
+
+    // Map unavailable dates to Date objects for disabledDates
+    unavailableDates.value = data.map(({ start_date, end_date }) => ({
+      start: new Date(start_date),
+      end: new Date(end_date),
+    }));
+
+    // Generate a flat array of all disabled dates
+    disabledDates.value = generateDisabledDates(unavailableDates.value);
+
+    console.log("Disabled dates:", disabledDates.value);
+
+    // Log disabled dates in 'YYYY-MM-DD' format
+    const isoDisabledDates = disabledDates.value.map(
+      (date) => date.toISOString().split("T")[0]
+    );
+    console.log("Disabled dates (YYYY-MM-DD):", isoDisabledDates);
+  } catch (error) {
+    console.error("Error fetching unavailable dates:", error);
+  }
+});
+
+// Helper function to generate an array of all disabled dates
+function generateDisabledDates(dateRanges) {
+  const dates = [];
+  dateRanges.forEach(({ start, end }) => {
+    let current = new Date(start);
+    const endDate = new Date(end);
+
+    while (current <= endDate) {
+      // Normalize to midnight (to avoid time zone issues)
+      const normalizedDate = new Date(
+        current.getFullYear(),
+        current.getMonth(),
+        current.getDate()
+      );
+
+      dates.push(normalizedDate);
+      current.setDate(current.getDate() + 1); // Increment day by 1
+    }
+  });
+  return dates;
+}
 
 // Calculate the total price when a camping spot or dates change
 function calculateTotalPrice() {
@@ -106,31 +217,29 @@ async function createBooking() {
       <label class="block text-gray-700 font-medium mb-2">{{ spotId }}</label>
     </div>
 
-    <!-- Select Start Date -->
+    <!-- Start Date Picker -->
     <div class="mb-4">
-      <label for="startDate" class="block text-gray-700 font-medium mb-2"
-        >Start Date</label
-      >
-      <Calendar
-        id="startDate"
+      <label for="startDate" class="block text-gray-700 font-medium mb-2">
+        Start Date
+      </label>
+      <DatePicker
         v-model="startDate"
-        class="w-full"
+        :disabled-dates="disabledDates"
         :min-date="new Date()"
-        @change="calculateTotalPrice"
+        class="w-full"
       />
     </div>
 
-    <!-- Select End Date -->
+    <!-- End Date Picker -->
     <div class="mb-4">
-      <label for="endDate" class="block text-gray-700 font-medium mb-2"
-        >End Date</label
-      >
-      <Calendar
-        id="endDate"
+      <label for="endDate" class="block text-gray-700 font-medium mb-2">
+        End Date
+      </label>
+      <DatePicker
         v-model="endDate"
-        class="w-full"
+        :disabled-dates="disabledDates"
         :min-date="startDate"
-        @change="calculateTotalPrice"
+        class="w-full"
       />
     </div>
 

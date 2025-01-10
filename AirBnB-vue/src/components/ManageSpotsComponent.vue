@@ -82,6 +82,56 @@ async function fetchBookings(campingSpotId) {
     bookings.value[campingSpotId] = []; // Ensure a fallback empty array
   }
 }
+
+// Accept a booking
+async function acceptBooking(bookingId, campingSpotId) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/accept-booking/${bookingId}`,
+      { method: "POST" }
+    );
+    if (response.ok) {
+      alert("Booking accepted successfully.");
+      // Update the bookings list to reflect the status change
+      bookings.value[campingSpotId] = bookings.value[campingSpotId].map(
+        (booking) =>
+          booking.booking_id === bookingId
+            ? { ...booking, status: "Accepted" }
+            : booking
+      );
+    } else {
+      throw new Error("Failed to accept the booking.");
+    }
+  } catch (error) {
+    console.error("Error accepting booking:", error);
+    alert("Failed to accept the booking.");
+  }
+}
+
+// Decline a booking
+async function declineBooking(bookingId, campingSpotId) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/decline-booking/${bookingId}`,
+      { method: "POST" }
+    );
+    if (response.ok) {
+      alert("Booking declined successfully.");
+      // Update the bookings list to reflect the status change
+      bookings.value[campingSpotId] = bookings.value[campingSpotId].map(
+        (booking) =>
+          booking.booking_id === bookingId
+            ? { ...booking, status: "Declined" }
+            : booking
+      );
+    } else {
+      throw new Error("Failed to decline the booking.");
+    }
+  } catch (error) {
+    console.error("Error declining booking:", error);
+    alert("Failed to decline the booking.");
+  }
+}
 </script>
 
 <template>
@@ -153,13 +203,55 @@ async function fetchBookings(campingSpotId) {
                   class="flex justify-between p-2 border-b border-gray-200"
                 >
                   <div>
-                    <p><strong>Name:</strong> {{ booking.user_name }}</p>
-                    <p><strong>Email:</strong> {{ booking.user_email }}</p>
-                    <p><strong>Start Date:</strong> {{ booking.start_date }}</p>
-                    <p><strong>End Date:</strong> {{ booking.end_date }}</p>
                     <p>
-                      <strong>Total Price:</strong> €{{ booking.total_price }}
+                      <strong>Name:</strong> {{ booking.user_name || "N/A" }}
                     </p>
+                    <p>
+                      <strong>Email:</strong> {{ booking.user_email || "N/A" }}
+                    </p>
+                    <p>
+                      <strong>Start Date:</strong>
+                      {{ booking.start_date || "N/A" }}
+                    </p>
+                    <p>
+                      <strong>End Date:</strong> {{ booking.end_date || "N/A" }}
+                    </p>
+                    <p>
+                      <strong>Total Price:</strong> €{{
+                        booking.total_price || "0.00"
+                      }}
+                    </p>
+                    <!-- Status with dynamic color -->
+                    <p>
+                      <strong>Status:</strong>
+                      <span
+                        :class="{
+                          'text-yellow-500': booking.status === 'Pending',
+                          'text-green-500': booking.status === 'Accepted',
+                          'text-red-500': booking.status === 'Declined',
+                        }"
+                      >
+                        {{ booking.status || "Pending" }}
+                      </span>
+                    </p>
+                  </div>
+                  <div class="flex gap-2" v-if="booking.status === 'Pending'">
+                    <Button
+                      label="Accept"
+                      icon="pi pi-check"
+                      class="p-button-success"
+                      @click="
+                        acceptBooking(booking.booking_id, item.camping_spot_id)
+                      "
+                    />
+                    <Button
+                      label="Decline"
+                      icon="pi pi-times"
+                      class="p-button-danger"
+                      @click="
+                        declineBooking(booking.booking_id, item.camping_spot_id)
+                      "
+                    />
                   </div>
                 </li>
               </ul>

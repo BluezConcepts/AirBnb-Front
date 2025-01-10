@@ -35,6 +35,10 @@ onMounted(async () => {
 function editSpot(campingSpotId) {
   router.push(`/edit-spot/${campingSpotId}`);
 }
+// Function to navigate to the view camping spot page
+function viewSpot(campingSpotId) {
+  router.push(`/spot/${campingSpotId}`);
+}
 
 // Function to delete a camping spot
 async function deleteSpot(campingSpotId) {
@@ -175,7 +179,14 @@ async function declineBooking(bookingId, campingSpotId) {
                 </div>
 
                 <!-- Actions -->
+
                 <div class="flex gap-4">
+                  <Button
+                    label="View"
+                    icon="pi pi-eye"
+                    class="p-button-info"
+                    @click="viewSpot(item.camping_spot_id)"
+                  />
                   <Button
                     label="Edit"
                     icon="pi pi-pencil"
